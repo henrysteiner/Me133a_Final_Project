@@ -3,6 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 from joint import Joint
+import math
 
 class Show_GUI():
 
@@ -12,11 +13,6 @@ class Show_GUI():
 		self.fig = plt.figure("DH Parameters	Robot Simulator")  #create the frame
 		self.axes = plt.axes([0.05, 0.2, 0.90, 0.75], projection='3d')
 
-		self.theta_val = 90
-		self.d_val = 0
-		self.r_val = 0
-		self.alpha_val = 0
-
 		self.joints = []
 		self.numJoints = 3
 
@@ -25,64 +21,68 @@ class Show_GUI():
 			self.joints.append(joint)
 
 		self.currentJoint = self.joints[0]
+		self.theta = self.currentJoint.theta
+		self.d = self.currentJoint.d
+		self.r = self.currentJoint.r
+		self.alpha = self.currentJoint.alpha
 
 		self.drawJoints()
 
 		# Draw Theta slider panel
 		thetaVals = plt.axes([0.35, 0.1425, 0.45, 0.03])
-		theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=90)
+		theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=math.degrees(self.currentJoint.theta))
 		
 		# Draw D slider panel
 		dVals = plt.axes([0.35, 0.1, 0.45, 0.03])
-		d_slide = Slider(dVals, 'D Value', 0.0, 300, valinit=0)
+		d_slide = Slider(dVals, 'D Value', 0.0, 300, valinit=self.currentJoint.d)
 
 		# Draw A slider panel
 		rVals = plt.axes([0.35, 0.0575, 0.45, 0.03])
-		r_slide = Slider(rVals, 'R Value', 0.0, 300, valinit=0)
+		r_slide = Slider(rVals, 'R Value', 0.0, 300, valinit=self.currentJoint.r)
 
 		# Draw Alpha slider panel
 		alphaVals = plt.axes([0.35, 0.015, 0.45, 0.03])
-		alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=0)
+		alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=math.degrees(self.currentJoint.alpha))
 
 		# Create radio button
-		jointType = plt.axes([0.05, 0.02, 0.15, 0.12])
+		jointNum = plt.axes([0.05, 0.02, 0.15, 0.12])
+		jointNum.set_title('Which Joint', fontsize=12)
+		jointNum = RadioButtons(jointNum, list(range(1,self.numJoints+1)), active=0)
+
+		# Create radio button
+		jointType = plt.axes([0.05, 0.20, 0.15, 0.12])
 		jointType.set_title('Joint Type', fontsize=12)
 		jointOptions = RadioButtons(jointType, ('Prismatic', 'Revolute'), active=1)
-
-		# Create radio button
-		jointNum = plt.axes([0.05, 0.20, 0.15, 0.12])
-		jointNum.set_title('Which Joint', fontsize=12)
-		jointNum = RadioButtons(jointNum, (1, 2, 3, 4), active=1)
 
 		def update_link():
 			if self.currentJoint.ID != self.numJoints:
 				newJoint = self.joints[self.currentJoint.ID]
-				self.currentJoint.defineNew(self.d_val, self.theta_val, self.r_val, self.alpha_val, newJoint)
+				self.currentJoint.defineNew(newJoint)
 				self.drawJoints()
 
 		def getTheta(val):
-			self.theta_val = val
+			self.currentJoint.theta = math.radians(val)
 			update_link()
 
 		def getD(val):
-			self.d_val = val
+			self.currentJoint.d = val
 			update_link()
 
 		def getR(val):
-			self.r_val = val
+			self.currentJoint.r = val
 			update_link()
 
 		def getAlpha(val):
-			self.alpha_val = val
+			self.currentJoint.alpha = math.radians(val)
 			update_link()
+
+		def changeCurrentJoint(label):
+			self.currentJoint = self.joints[int(label)-1]
 
 		theta_slide.on_changed(getTheta)
 		d_slide.on_changed(getD)
 		r_slide.on_changed(getR)
 		alpha_slide.on_changed(getAlpha)
-
-		def changeCurrentJoint(label):
-			self.currentJoint = self.joints[int(label)-1]
 
 		jointNum.on_clicked(changeCurrentJoint)
 
@@ -108,7 +108,7 @@ class Show_GUI():
 			posX = joint.x
 			posY = joint.y
 			posZ = joint.z
-			lineDist = 0.5
+			lineDist = 1
 
 			if joint.ID == 1:
 			   xs = list((posX, posX + lineDist))
