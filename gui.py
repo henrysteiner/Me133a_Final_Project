@@ -32,13 +32,13 @@ class Show_GUI():
 		thetaVals = plt.axes([0.35, 0.1425, 0.45, 0.03])
 		theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=math.degrees(self.currentJoint.theta))
 		
-		# Draw D slider panel
+		# Draw d slider panel
 		dVals = plt.axes([0.35, 0.1, 0.45, 0.03])
-		d_slide = Slider(dVals, 'D Value', 0.0, 300, valinit=self.currentJoint.d)
+		d_slide = Slider(dVals, 'D Value', 0.0, 10, valinit=self.currentJoint.d)
 
-		# Draw A slider panel
+		# Draw r slider panel
 		rVals = plt.axes([0.35, 0.0575, 0.45, 0.03])
-		r_slide = Slider(rVals, 'R Value', 0.0, 300, valinit=self.currentJoint.r)
+		r_slide = Slider(rVals, 'R Value', 0.0, 10, valinit=self.currentJoint.r)
 
 		# Draw Alpha slider panel
 		alphaVals = plt.axes([0.35, 0.015, 0.45, 0.03])
@@ -155,14 +155,15 @@ class Show_GUI():
 		x = np.array(self.x).tolist()
 		y = np.array(self.y).tolist()
 		z = np.array(self.z).tolist()
-
+	
 		self.axes.cla() # clear current axis
-
 		# draw lines and faces
 		self.axes.plot(x, y, z, 'o-', markersize=20,
 			markerfacecolor="orange", linewidth=8, color="blue")
 		self.axes.plot(x, y, z, 'o-', markersize=4,
 			markerfacecolor="blue", linewidth=1, color="silver")
+		for i in range(0,len(x)):
+			self.axes.text(x[i],y[i],z[i],"Joint " + str(i),color='black')
 
 	def set_axes(self):
 
@@ -180,7 +181,7 @@ class Show_GUI():
 		self.set_axes()
 		self.plotJoints()
 		self.plotCoordinateSystem()
-
+		
 		plt.draw()
 
 if __name__ == '__main__':
