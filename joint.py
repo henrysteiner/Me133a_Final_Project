@@ -17,7 +17,7 @@ class Joint(object):
 	in order to calculate the new coordinate system and location of the new joint (updating the new joint)'''
 
 		# If the new joint is prismatic
-		if newJoint.jtype == 0:
+		if self.type == 0:
 			d = theta
 			theta = 0
 
