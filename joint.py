@@ -12,8 +12,11 @@ class Joint(object):
 		self.y = 0 # in relation to original
 		self.z = 0 # in relation to original
 
+<<<<<<< HEAD
+=======
 	'''This function takes an initial joint object, a new joint object, and Denavit-Hartenberg parameters
 	in order to calculate the new coordinate system and location of the new joint (updating the new joint)'''
+>>>>>>> 57499731e8d57a8649646b33095d5cdad4258112
 	def defineNew(self, d,theta,r,alpha,newJoint):
 
 		# If the new joint is prismatic

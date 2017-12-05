@@ -12,68 +12,81 @@ class Show_GUI():
 		self.fig = plt.figure("DH Parameters	Robot Simulator")  #create the frame
 		self.axes = plt.axes([0.05, 0.2, 0.90, 0.75], projection='3d')
 
-		self.joints = []
-		self.numJoints = 1
+		self.theta_val = 90
+		self.d_val = 0
+		self.r_val = 0
+		self.alpha_val = 0
 
-		joint1 = Joint(1, self.numJoints)
-		self.joints.append(joint1)
+		self.joints = []
+		self.numJoints = 3
+
+		for i in range(self.numJoints):
+			joint = Joint(1, i+1)
+			self.joints.append(joint)
+
+		self.currentJoint = self.joints[0]
 
 		self.drawJoints()
 
 		# Draw Theta slider panel
 		thetaVals = plt.axes([0.35, 0.1425, 0.45, 0.03])
-		theta_val = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=90)
+		theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=90)
 		
 		# Draw D slider panel
 		dVals = plt.axes([0.35, 0.1, 0.45, 0.03])
-		d_val = Slider(dVals, 'D Value', 0.0, 300, valinit=0)
+		d_slide = Slider(dVals, 'D Value', 0.0, 300, valinit=0)
 
 		# Draw A slider panel
 		rVals = plt.axes([0.35, 0.0575, 0.45, 0.03])
-		r_val = Slider(rVals, 'R Value', 0.0, 300, valinit=0)
+		r_slide = Slider(rVals, 'R Value', 0.0, 300, valinit=0)
 
 		# Draw Alpha slider panel
 		alphaVals = plt.axes([0.35, 0.015, 0.45, 0.03])
-		alpha_val = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=0)
+		alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=0)
 
 		# Create radio button
-		joint = plt.axes([0.05, 0.02, 0.15, 0.12])
-		joint.set_title('Joint Type', fontsize=12)
-		jointOptions = RadioButtons(joint, ('Prismatic', 'Revolute'), active=2)
+		jointType = plt.axes([0.05, 0.02, 0.15, 0.12])
+		jointType.set_title('Joint Type', fontsize=12)
+		jointOptions = RadioButtons(jointType, ('Prismatic', 'Revolute'), active=1)
 
-		def update_theta_val(val):
-			self.drawJoints()
-			print('theta: ' + str(val))
+		# Create radio button
+		jointNum = plt.axes([0.05, 0.20, 0.15, 0.12])
+		jointNum.set_title('Which Joint', fontsize=12)
+		jointNum = RadioButtons(jointNum, (1, 2, 3, 4), active=1)
 
-		theta_val.on_changed(update_theta_val)
+		def update_link():
+			if self.currentJoint.ID != self.numJoints:
+				newJoint = self.joints[self.currentJoint.ID]
+				self.currentJoint.defineNew(self.d_val, self.theta_val, self.r_val, self.alpha_val, newJoint)
+				self.drawJoints()
 
-		def update_d_val(val):
-			self.drawJoints()
-			print('d: ' + str(val))
+		def getTheta(val):
+			self.theta_val = val
+			update_link()
 
-		d_val.on_changed(update_d_val)
+		def getD(val):
+			self.d_val = val
+			update_link()
 
-		def update_r_val(val):
-			self.drawJoints()
-			print('r: ' + str(val))
+		def getR(val):
+			self.r_val = val
+			update_link()
 
-		r_val.on_changed(update_r_val)
+		def getAlpha(val):
+			self.alpha_val = val
+			update_link()
 
-		def update_alpha_val(val):
-			self.drawJoints()
-			print('alpha: ' + str(val))
+		theta_slide.on_changed(getTheta)
+		d_slide.on_changed(getD)
+		r_slide.on_changed(getR)
+		alpha_slide.on_changed(getAlpha)
 
-		alpha_val.on_changed(update_alpha_val)
+		def changeCurrentJoint(label):
+			self.currentJoint = self.joints[label-1]
+
+		jointNum.on_clicked(changeCurrentJoint)
 
 		plt.show()
-
-	def createJoint(self):
-		self.numJoints += 1
-
-		joint = Joint(typeInit, self.numJoints)
-		link = Link(d0, theta0, r0, alpha0, prevJoint, newJoint)
-
-		self.numJoints += 1
 
 	def fillArrays(self):
 		x = []
