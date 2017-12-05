@@ -1,20 +1,23 @@
 from sympy.vector import CoordSys3D
 
 class Joint(object):
+	'''This class defines a Joint object as either prismatic or revolute, and contains its coordinate system
+	location and orientation'''
 
 	def __init__(self, jType, ID):
-		self.type = jType
+		self.type = jType # 0 for prismatic, 1 for revolute
 		self.ID = ID
 		self.coordSystem = CoordSys3D(str(ID))
 		self.x = 0 # in relation to original
 		self.y = 0 # in relation to original
 		self.z = 0 # in relation to original
 
-	def createLink(d,theta,r,alpha,newJoint):
+	def defineNew(self, d,theta,r,alpha,newJoint):
 	'''This function takes an initial joint object, a new joint object, and Denavit-Hartenberg parameters
-	in order to calculate the new coordinate system and location of the new joint'''
+	in order to calculate the new coordinate system and location of the new joint (updating the new joint)'''
 
-		if newJoint.jtype == 0: #  0 for prismatic, 1 for revolute
+		# If the new joint is prismatic
+		if newJoint.jtype == 0:
 			d = theta
 			theta = 0
 
