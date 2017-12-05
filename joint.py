@@ -12,11 +12,8 @@ class Joint(object):
 		self.y = 0 # in relation to original
 		self.z = 0 # in relation to original
 
-<<<<<<< HEAD
-=======
 	'''This function takes an initial joint object, a new joint object, and Denavit-Hartenberg parameters
 	in order to calculate the new coordinate system and location of the new joint (updating the new joint)'''
->>>>>>> 57499731e8d57a8649646b33095d5cdad4258112
 	def defineNew(self, d,theta,r,alpha,newJoint):
 
 		# If the new joint is prismatic
@@ -33,7 +30,7 @@ class Joint(object):
 
 		# Translating coordinate system based on d (distance from previous joint to new joint along PREVIOUS z-axis)
 		# and r (distance from previous joint to new joint along the NEW x-axis)
-		newCoord = temp2.orient_new_axis('newCoord',0,temp2.k,location=d*prevCoord.k + r*temp2.i)
+		newCoord = temp2.orient_new_axis('newCoord',0,temp2.k,location=(d*prevCoord.k + r*temp2.i))
 
 		# Redfining the new Joint's coordinate system
 		newJoint.coordSystem = newCoord
@@ -43,9 +40,9 @@ class Joint(object):
 
 		# Computing the coordinates of the new coordinate frame with respect to the origin and defining the new Joint accordingly
 		position = origin.origin.express_coordinates(newCoord)
-		newJoint.x = position[0]
-		newJoint.y = position[1]
-		newJoint.z = position[2]
+		newJoint.x = float(position[0])
+		newJoint.y = float(position[1])
+		newJoint.z = float(position[2])
 
 
 

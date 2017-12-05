@@ -82,7 +82,7 @@ class Show_GUI():
 		alpha_slide.on_changed(getAlpha)
 
 		def changeCurrentJoint(label):
-			self.currentJoint = self.joints[label-1]
+			self.currentJoint = self.joints[int(label)-1]
 
 		jointNum.on_clicked(changeCurrentJoint)
 
