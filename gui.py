@@ -56,7 +56,9 @@ class Show_GUI():
 
 		def update_link():
 			while self.currentJoint.ID <= self.numJoints:
+				print("Yes")
 				newJoint = self.joints[self.currentJoint.ID + 1]
+				print("No")
 				self.currentJoint.defineNew(newJoint)
 				self.drawJoints()
 
