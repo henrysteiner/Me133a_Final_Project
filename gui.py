@@ -17,7 +17,7 @@ class Show_GUI():
 		self.numJoints = 3
 
 		for i in range(self.numJoints):
-			joint = Joint(1, i+1)
+			joint = Joint(0, i)
 			self.joints.append(joint)
 
 		self.currentJoint = self.joints[0]
@@ -47,7 +47,7 @@ class Show_GUI():
 		# Create radio button
 		jointNum = plt.axes([0.05, 0.02, 0.15, 0.12])
 		jointNum.set_title('Which Joint', fontsize=12)
-		jointNum = RadioButtons(jointNum, list(range(1,self.numJoints+1)), active=0)
+		jointNum = RadioButtons(jointNum, list(range(1,self.numJoints)), active=0)
 
 		# Create radio button
 		jointType = plt.axes([0.05, 0.20, 0.15, 0.12])
@@ -55,8 +55,8 @@ class Show_GUI():
 		jointOptions = RadioButtons(jointType, ('Prismatic', 'Revolute'), active=1)
 
 		def update_link():
-			while self.currentJoint.ID < self.numJoints:
-				newJoint = self.joints[self.currentJoint.ID]
+			while self.currentJoint.ID <= self.numJoints:
+				newJoint = self.joints[self.currentJoint.ID + 1]
 				self.currentJoint.defineNew(newJoint)
 				self.drawJoints()
 
