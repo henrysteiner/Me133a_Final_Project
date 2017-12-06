@@ -17,7 +17,7 @@ class Show_GUI():
 		self.numJoints = 3
 
 		for i in range(self.numJoints):
-			joint = Joint(0, i)
+			joint = Joint(1, i)
 			self.joints.append(joint)
 
 		self.currentJoint = self.joints[0]
