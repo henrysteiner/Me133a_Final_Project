@@ -88,7 +88,8 @@ class Show_GUI():
 			self.d_slide.set_val(self.currentJoint.d)
 			self.r_slide.set_val(self.currentJoint.r)
 			self.alpha_slide.set_val(math.degrees(self.currentJoint.alpha))
-			self.jointOptions.set_active(self.currentJoint.type)
+			#self.jointOptions.set_active(self.currentJoint.type)
+			self.jointOptions.active = self.currentJoint.type
 
 		self.theta_slide.on_changed(getTheta)
 		self.d_slide.on_changed(getD)
@@ -120,7 +121,7 @@ class Show_GUI():
 			posX = joint.x
 			posY = joint.y
 			posZ = joint.z
-			lineDist = 1
+			lineDist = 5
 
 			if joint.ID == 1:
 			   xs = list((posX, posX + lineDist))
@@ -185,9 +186,6 @@ class Show_GUI():
 		self.axes.set_xlabel('X axis')
 		self.axes.set_ylabel('Y axis')
 		self.axes.set_zlabel('Z axis')
-
-		# for j in self.axes.get_xticklabels() + self.axes.get_yticklabels() + self.axes.get_zticklabels(): #hide ticks
-		# 	j.set_visible(False)
 
 	def drawJoints(self):
 		self.plotJoints()
