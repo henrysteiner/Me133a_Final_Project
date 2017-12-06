@@ -12,53 +12,54 @@ class Show_GUI():
 		# Initialize all the variables
 		self.fig = plt.figure("DH Parameters	Robot Simulator")  #create the frame
 		self.axes = plt.axes([0.05, 0.2, 0.90, 0.75], projection='3d')
+		self.axes.set_autoscale_on(False)
 
 		self.joints = []
-		self.numJoints = 3
+		self.numJoints = 4
 
 		for i in range(self.numJoints):
 			joint = Joint(1, i)
 			self.joints.append(joint)
 
-		self.currentJoint = self.joints[0]
-		self.theta = self.currentJoint.theta
-		self.d = self.currentJoint.d
-		self.r = self.currentJoint.r
-		self.alpha = self.currentJoint.alpha
-
+		self.currentJoint = self.joints[1]
 		self.drawJoints()
 
 		# Draw Theta slider panel
 		thetaVals = plt.axes([0.35, 0.1425, 0.45, 0.03])
-		theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=math.degrees(self.currentJoint.theta))
+		self.theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=math.degrees(self.currentJoint.theta))
 		
 		# Draw d slider panel
 		dVals = plt.axes([0.35, 0.1, 0.45, 0.03])
-		d_slide = Slider(dVals, 'D Value', 0.0, 10, valinit=self.currentJoint.d)
+		self.d_slide = Slider(dVals, 'D Value', 0.0, 10, valinit=self.currentJoint.d)
 
 		# Draw r slider panel
 		rVals = plt.axes([0.35, 0.0575, 0.45, 0.03])
-		r_slide = Slider(rVals, 'R Value', 0.0, 10, valinit=self.currentJoint.r)
+		self.r_slide = Slider(rVals, 'R Value', 0.0, 10, valinit=self.currentJoint.r)
 
 		# Draw Alpha slider panel
 		alphaVals = plt.axes([0.35, 0.015, 0.45, 0.03])
-		alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=math.degrees(self.currentJoint.alpha))
+		self.alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=math.degrees(self.currentJoint.alpha))
 
 		# Create radio button
-		jointNum = plt.axes([0.05, 0.02, 0.15, 0.12])
-		jointNum.set_title('Which Joint', fontsize=12)
-		jointNum = RadioButtons(jointNum, list(range(1,self.numJoints)), active=0)
+		linkNum = plt.axes([0.05, 0.02, 0.15, 0.12])
+		linkNum.set_title('Link Number', fontsize=12)
+		linkNum_Radio = RadioButtons(linkNum, list(range(1,self.numJoints)), active=0)
 
 		# Create radio button
 		jointType = plt.axes([0.05, 0.20, 0.15, 0.12])
 		jointType.set_title('Joint Type', fontsize=12)
-		jointOptions = RadioButtons(jointType, ('Prismatic', 'Revolute'), active=1)
+		self.jointOptions = RadioButtons(jointType, ('Prismatic', 'Revolute'), active=1)
 
 		def update_link():
-			if self.currentJoint.ID != self.numJoints:
-				newJoint = self.joints[self.currentJoint.ID + 1]
-				self.currentJoint.defineNew(newJoint)
-				self.drawJoints()
+			curID = self.currentJoint.ID
+			while curID < self.numJoints:
+				oldJoint = self.joints[curID - 1]
+				curJoint = self.joints[curID]
+
+				curJoint.defineNew(oldJoint)
+				curID += 1
+
+			self.drawJoints()
 
 		def getTheta(val):
 			self.currentJoint.theta = math.radians(val)
@@ -76,15 +77,25 @@ class Show_GUI():
 			self.currentJoint.alpha = math.radians(val)
 			update_link()
 
-		def changeCurrentJoint(label):
-			self.currentJoint = self.joints[int(label)-1]
+		def changeType(val):
+			print("Changing type")
+			self.currentJoint.type = val
 
-		theta_slide.on_changed(getTheta)
-		d_slide.on_changed(getD)
-		r_slide.on_changed(getR)
-		alpha_slide.on_changed(getAlpha)
+		def changeCurrentLink(label):
+			self.currentJoint = self.joints[int(label)]
+			self.theta_slide.set_val(math.degrees(self.currentJoint.theta))
+			self.d_slide.set_val(self.currentJoint.d)
+			self.r_slide.set_val(self.currentJoint.r)
+			self.alpha_slide.set_val(math.degrees(self.currentJoint.alpha))
+			self.jointOptions.set_active(self.currentJoint.type)
 
-		jointNum.on_clicked(changeCurrentJoint)
+		self.theta_slide.on_changed(getTheta)
+		self.d_slide.on_changed(getD)
+		self.r_slide.on_changed(getR)
+		self.alpha_slide.on_changed(getAlpha)
+
+		linkNum_Radio.on_clicked(changeCurrentLink)
+		self.jointOptions.on_clicked(changeType)
 
 		plt.show()
 
@@ -167,22 +178,22 @@ class Show_GUI():
 
 	def set_axes(self):
 
-		self.axes.set_xlim3d(-200, 200)
-		self.axes.set_ylim3d(-200, 200)
-		self.axes.set_zlim3d(-5, 200)
+		self.axes.set_xlim3d(-10, 10)
+		self.axes.set_ylim3d(-10, 10)
+		self.axes.set_zlim3d(-10, 10)
 		self.axes.set_xlabel('X axis')
 		self.axes.set_ylabel('Y axis')
 		self.axes.set_zlabel('Z axis')
 
-		for j in self.axes.get_xticklabels() + self.axes.get_yticklabels() + self.axes.get_zticklabels(): #hide ticks
-			j.set_visible(False)
+		# for j in self.axes.get_xticklabels() + self.axes.get_yticklabels() + self.axes.get_zticklabels(): #hide ticks
+		# 	j.set_visible(False)
 
 	def drawJoints(self):
-		self.set_axes()
 		self.plotJoints()
 		self.plotCoordinateSystem()
 		
 		plt.draw()
+		self.set_axes()
 
 if __name__ == '__main__':
 	gui = Show_GUI()
