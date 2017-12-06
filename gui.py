@@ -55,7 +55,7 @@ class Show_GUI():
 		jointOptions = RadioButtons(jointType, ('Prismatic', 'Revolute'), active=1)
 
 		def update_link():
-			while self.currentJoint.ID <= self.numJoints:
+			if self.currentJoint.ID != self.numJoints:
 				newJoint = self.joints[self.currentJoint.ID + 1]
 				self.currentJoint.defineNew(newJoint)
 				self.drawJoints()
