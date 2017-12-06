@@ -78,8 +78,8 @@ class Show_GUI():
 			update_link()
 
 		def changeType(val):
-			print("Changing type")
 			self.currentJoint.type = val
+			update_link()
 
 		def changeCurrentLink(label):
 			self.currentJoint = self.joints[int(label)]
