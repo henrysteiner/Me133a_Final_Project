@@ -22,6 +22,7 @@ class Joint(object):
 	in order to calculate the new coordinate systems and location of the new joint (updating the new joint)'''
 	def defineNew(self, prevJoint):
 
+		print('in here')
 		# If the new joint is prismatic
 		if self.type == 0:
 			self.d = self.theta

@@ -25,19 +25,19 @@ class Show_GUI():
 		self.drawJoints()
 
 		# Draw Theta slider panel
-		thetaVals = plt.axes([0.35, 0.1425, 0.45, 0.03])
+		thetaVals = plt.axes([0.35, 0.1425, 0.30, 0.03])
 		self.theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=math.degrees(self.currentJoint.theta))
 		
 		# Draw d slider panel
-		dVals = plt.axes([0.35, 0.1, 0.45, 0.03])
+		dVals = plt.axes([0.35, 0.1, 0.30, 0.03])
 		self.d_slide = Slider(dVals, 'D Value', 0.0, 10, valinit=self.currentJoint.d)
 
 		# Draw r slider panel
-		rVals = plt.axes([0.35, 0.0575, 0.45, 0.03])
+		rVals = plt.axes([0.35, 0.0575, 0.30, 0.03])
 		self.r_slide = Slider(rVals, 'R Value', 0.0, 10, valinit=self.currentJoint.r)
 
 		# Draw Alpha slider panel
-		alphaVals = plt.axes([0.35, 0.015, 0.45, 0.03])
+		alphaVals = plt.axes([0.35, 0.015, 0.30, 0.03])
 		self.alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=math.degrees(self.currentJoint.alpha))
 
 		# Create radio button
@@ -46,9 +46,10 @@ class Show_GUI():
 		linkNum_Radio = RadioButtons(linkNum, list(range(1,self.numJoints)), active=0)
 
 		# Create radio button
-		jointType = plt.axes([0.05, 0.20, 0.15, 0.12])
+		jointType = plt.axes([0.75, 0.02, 0.15, 0.12])
 		jointType.set_title('Joint Type', fontsize=12)
-		self.jointOptions = RadioButtons(jointType, ('Prismatic', 'Revolute'), active=1)
+		types = {'Prismatic': 0, 'Revolute': 1}
+		self.jointOptions = RadioButtons(jointType, types.keys(), active=1)
 
 		def update_link():
 			curID = self.currentJoint.ID
@@ -78,7 +79,7 @@ class Show_GUI():
 			update_link()
 
 		def changeType(val):
-			self.currentJoint.type = val
+			self.currentJoint.type = types[val]
 			update_link()
 
 		def changeCurrentLink(label):
