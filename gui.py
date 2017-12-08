@@ -22,8 +22,21 @@ class Show_GUI():
 			joint = Joint(1,i)
 			self.joints.append(joint)
 
+		self.joints[0].setCoordSys()
 		self.currentJoint = self.joints[1]
-		self.drawJoints()
+
+		def update_link():
+			curID = self.currentJoint.ID
+			while curID < self.numJoints:
+				oldJoint = self.joints[curID - 1]
+				curJoint = self.joints[curID]
+
+				curJoint.defineNew(oldJoint)
+				curID += 1
+
+			self.drawJoints()
+
+		update_link()
 
 		# Draw Theta slider panel
 		thetaVals = plt.axes([0.35, 0.20, 0.30, 0.03])
@@ -59,17 +72,6 @@ class Show_GUI():
 		# Button for adding a joint
 		addButton = plt.axes([0.05, 0.20, 0.11, 0.06])
 		self.addJoint = Button(addButton, 'Add')
-
-		def update_link():
-			curID = self.currentJoint.ID
-			while curID < self.numJoints:
-				oldJoint = self.joints[curID - 1]
-				curJoint = self.joints[curID]
-
-				curJoint.defineNew(oldJoint)
-				curID += 1
-
-			self.drawJoints()
 
 		def getTheta(val):
 			self.currentJoint.theta = math.radians(val)
@@ -175,7 +177,7 @@ class Show_GUI():
 
 	def set_axes(self):
 
-		self.axes.set_xlim3d(-10, 10)
+		self.axes.set_xlim3d(-5, 15)
 		self.axes.set_ylim3d(-10, 10)
 		self.axes.set_zlim3d(0, 10)
 		self.axes.set_xlabel('X axis')
@@ -183,11 +185,13 @@ class Show_GUI():
 		self.axes.set_zlabel('Z axis')
 
 	def drawJoints(self):
-		self.set_axes()
+	
 		self.plotJoints()
 		self.plotCoordinateSystem()
 		
 		plt.draw()
+		self.set_axes()
+
 		
 
 if __name__ == '__main__':

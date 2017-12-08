@@ -18,6 +18,9 @@ class Joint(object):
 		self.r = 0
 		self.alpha = math.radians(90)
 
+	def setCoordSys(self):
+		self.coordSystem = CoordSys3D(str(self.ID))
+
 	'''This function takes an initial joint object, a new joint object, and Denavit-Hartenberg parameters
 	in order to calculate the new coordinate systems and location of the new joint (updating the new joint)'''
 	def defineNew(self, prevJoint):
