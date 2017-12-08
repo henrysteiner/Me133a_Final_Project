@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from joint import Joint
 import math
+import forwardKinematics as fK
 
 class Show_GUI():
 
@@ -11,7 +12,7 @@ class Show_GUI():
 
 		# Initialize all the variables
 		self.fig = plt.figure("DH Parameters	Robot Simulator")  #create the frame
-		self.axes = plt.axes([0.05, 0.2, 0.90, 0.75], projection='3d')
+		self.axes = plt.axes([0.05, 0.25, 0.90, 0.75], projection='3d')
 		self.axes.autoscale(enable=False,axis='both')
 
 		self.joints = []
@@ -25,31 +26,39 @@ class Show_GUI():
 		self.drawJoints()
 
 		# Draw Theta slider panel
-		thetaVals = plt.axes([0.35, 0.1425, 0.30, 0.03])
-		self.theta_slide = Slider(thetaVals, 'Theta Value', 0.0, 360, valinit=math.degrees(self.currentJoint.theta))
+		thetaVals = plt.axes([0.35, 0.20, 0.30, 0.03])
+		self.theta_slide = Slider(thetaVals, 'Theta Value', -180, 180, valinit=math.degrees(self.currentJoint.theta))
 		
 		# Draw d slider panel
-		dVals = plt.axes([0.35, 0.1, 0.30, 0.03])
+		dVals = plt.axes([0.35, 0.1575, 0.30, 0.03])
 		self.d_slide = Slider(dVals, 'D Value', 0.0, 10, valinit=self.currentJoint.d)
 
 		# Draw r slider panel
-		rVals = plt.axes([0.35, 0.0575, 0.30, 0.03])
+		rVals = plt.axes([0.35, 0.115, 0.30, 0.03])
 		self.r_slide = Slider(rVals, 'R Value', 0.0, 10, valinit=self.currentJoint.r)
 
 		# Draw Alpha slider panel
-		alphaVals = plt.axes([0.35, 0.015, 0.30, 0.03])
+		alphaVals = plt.axes([0.35, 0.0725, 0.30, 0.03])
 		self.alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=math.degrees(self.currentJoint.alpha))
 
 		# Create radio button
-		linkNum = plt.axes([0.05, 0.02, 0.15, 0.12])
+		linkNum = plt.axes([0.03, 0.040, 0.15, 0.12])
 		linkNum.set_title('Link Number', fontsize=12)
 		linkNum_Radio = RadioButtons(linkNum, list(range(1,self.numJoints)), active=0)
 
 		# Create radio button
-		jointType = plt.axes([0.75, 0.02, 0.15, 0.12])
+		jointType = plt.axes([0.75, 0.040, 0.15, 0.12])
 		jointType.set_title('Joint Type', fontsize=12)
 		types = {'Prismatic': 0, 'Revolute': 1}
 		self.jointOptions = RadioButtons(jointType, types.keys(), active=1)
+
+		# Button for forward kinematics map
+		fKButton = plt.axes([0.77, 0.20, 0.11, 0.06])
+		fKGenerate = Button(fKButton, 'Fwd Kinem.')
+
+		# Button for adding a joint
+		addButton = plt.axes([0.05, 0.20, 0.11, 0.06])
+		self.addJoint = Button(addButton, 'Add')
 
 		def update_link():
 			curID = self.currentJoint.ID
@@ -82,6 +91,9 @@ class Show_GUI():
 			self.currentJoint.type = types[val]
 			update_link()
 
+		def generateMap(val):
+			fK.generateFK(self.joints)
+
 		def changeCurrentLink(label):
 			self.currentJoint = self.joints[int(label)]
 			self.theta_slide.set_val(math.degrees(self.currentJoint.theta))
@@ -98,6 +110,7 @@ class Show_GUI():
 
 		linkNum_Radio.on_clicked(changeCurrentLink)
 		self.jointOptions.on_clicked(changeType)
+		fKGenerate.on_clicked(generateMap)
 
 		plt.show()
 
