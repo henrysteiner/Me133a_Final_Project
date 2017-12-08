@@ -39,13 +39,13 @@ class Joint(object):
 
 		# Translating coordinate system based on d (distance from previous joint to new joint along PREVIOUS z-axis)
 		# and r (distance from previous joint to new joint along the NEW x-axis)
-		newCoord = temp2.orient_new_axis('newCoord',0,temp2.k,location=(-self.d*prevCoord.k - self.r*temp2.i))
+		newCoord = temp2.orient_new_axis('newCoord',0,temp2.k,location=(self.d*prevCoord.k + self.r*temp2.i))
 
 		# Redfining the new Joint's coordinate system
 		self.coordSystem = newCoord
 
 		# Computing the coordinates of the new coordinate frame with respect to the origin and defining the new Joint accordingly
-		position =self.initJoint.coordSystem.origin.express_coordinates(newCoord)
+		position = newCoord.origin.express_coordinates(self.initJoint.coordSystem)
 		self.x = float(position[0])
 		self.y = float(position[1])
 		self.z = float(position[2])
