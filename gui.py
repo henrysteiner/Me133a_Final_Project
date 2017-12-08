@@ -5,18 +5,26 @@ import numpy as np
 from joint import Joint
 import math
 import forwardKinematics as fK
+from ipywidgets import widgets
 
+# This class performs all the GUI handling and interfaces with the back
+# end to compute new joint positions.
 class Show_GUI():
 
-	def __init__(self):
+	def __init__(self, filename):
+
+		self.filename = filename
 
 		# Initialize all the variables
 		self.fig = plt.figure("DH Parameters	Robot Simulator")  #create the frame
 		self.axes = plt.axes([0.05, 0.25, 0.90, 0.75], projection='3d')
+		# Ensures that autoscaling is off
 		self.axes.autoscale(enable=False,axis='both')
 
+		# Starts with a default of 4 joints.
 		self.numJoints = 4
 
+		# Initialize all the joints
 		jointInit = Joint(1, 0)
 		jointInit.setCoordSys()
 		self.joints = [jointInit]
@@ -42,6 +50,9 @@ class Show_GUI():
 
 		update_link()
 
+
+		# Here, we create the interactive elements of the plot
+
 		# Draw Theta slider panel
 		thetaVals = plt.axes([0.35, 0.20, 0.30, 0.03])
 		self.theta_slide = Slider(thetaVals, 'Theta Value', -180, 180, valinit=math.degrees(self.currentJoint.theta))
@@ -58,24 +69,24 @@ class Show_GUI():
 		alphaVals = plt.axes([0.35, 0.0725, 0.30, 0.03])
 		self.alpha_slide = Slider(alphaVals, 'Alpha Value', -180, 180, valinit=math.degrees(self.currentJoint.alpha))
 
-		# Create radio button
-		linkNum = plt.axes([0.03, 0.040, 0.15, 0.12])
-		linkNum.set_title('Link Number', fontsize=12)
-		linkNum_Radio = RadioButtons(linkNum, list(range(1,self.numJoints)), active=0)
+		# Link selection slider
+		linkNum = plt.axes([0.35, 0.03, 0.30, 0.03])
+		self.link_slide = Slider(linkNum, 'Link Number', 1, self.numJoints-1, valinit=1, valfmt='%0.0f', )
 
-		# Create radio button
+		# Create radio button for joint type.
 		jointType = plt.axes([0.75, 0.040, 0.15, 0.12])
 		jointType.set_title('Joint Type', fontsize=12)
 		types = {'Prismatic': 0, 'Revolute': 1}
 		self.jointOptions = RadioButtons(jointType, types.keys(), active=1)
 
 		# Button for forward kinematics map
-		fKButton = plt.axes([0.77, 0.20, 0.11, 0.06])
+		fKButton = plt.axes([0.05, 0.15, 0.11, 0.06])
 		fKGenerate = Button(fKButton, 'Fwd Kinem.')
 
 		# Button for adding a joint
-		addButton = plt.axes([0.05, 0.20, 0.11, 0.06])
-		self.addJoint = Button(addButton, 'Add')
+		addButton = plt.axes([0.05, 0.05, 0.11, 0.06])
+		addJoint = Button(addButton, 'Add Joint')
+
 
 		def getTheta(val):
 			self.currentJoint.theta = math.radians(val)
@@ -98,25 +109,42 @@ class Show_GUI():
 			update_link()
 
 		def generateMap(val):
-			fK.generateFK(self.joints)
+			fK.generateFK(self.joints, self.filename)
 
-		def changeCurrentLink(label):
-			self.currentJoint = self.joints[int(label)]
-			self.theta_slide.set_val(math.degrees(self.currentJoint.theta))
-			self.d_slide.set_val(self.currentJoint.d)
-			self.r_slide.set_val(self.currentJoint.r)
-			self.alpha_slide.set_val(math.degrees(self.currentJoint.alpha))
-			#self.jointOptions.set_active(self.currentJoint.type)
-			self.jointOptions.active = self.currentJoint.type
+		# When the link slider is changed, this function is called. 
+		# It is responsible for updating the slider values and changing
+		# the currentJoint reference.
+		def changeCurrentLink(val):
+			newVal = int(round(val))
+			if newVal != self.currentJoint.ID:
+				self.currentJoint = self.joints[int(round(val))]
+				self.theta_slide.set_val(math.degrees(self.currentJoint.theta))
+				self.d_slide.set_val(self.currentJoint.d)
+				self.r_slide.set_val(self.currentJoint.r)
+				self.alpha_slide.set_val(math.degrees(self.currentJoint.alpha))
+				self.jointOptions.active = self.currentJoint.type
+
+		# This is triggered when the add button is clicked. It intializes a new
+		# joint and updates the slider values.
+		def addNew(val):
+			joint = Joint(1,self.numJoints)
+			joint.initJoint = jointInit
+			self.joints.append(joint)
+
+			self.numJoints += 1
+			self.link_slide.valmax = self.numJoints - 1
+			self.link_slide.ax.set_xlim(self.link_slide.valmin, self.link_slide.valmax)
+			update_link()
 
 		self.theta_slide.on_changed(getTheta)
 		self.d_slide.on_changed(getD)
 		self.r_slide.on_changed(getR)
 		self.alpha_slide.on_changed(getAlpha)
+		self.link_slide.on_changed(changeCurrentLink)
 
-		linkNum_Radio.on_clicked(changeCurrentLink)
 		self.jointOptions.on_clicked(changeType)
 		fKGenerate.on_clicked(generateMap)
+		addJoint.on_clicked(addNew)
 
 		plt.show()
 
@@ -133,6 +161,8 @@ class Show_GUI():
 		self.y = np.array(y)
 		self.z = np.array(z)
 
+	# This function plots coordinate systems on top of the joints so we
+	# can better visualize their movements/rotations.
 	def plotCoordinateSystem(self):
 		for i in range(self.numJoints):
 			joint = self.joints[i]
@@ -176,6 +206,7 @@ class Show_GUI():
 			markerfacecolor="orange", linewidth=8, color="blue")
 		self.axes.plot(x, y, z, 'o-', markersize=4,
 			markerfacecolor="blue", linewidth=1, color="silver")
+		
 		for i in range(0,len(x)):
 			self.axes.text(x[i],y[i],z[i],"Joint " + str(i),color='black')
 
@@ -197,7 +228,8 @@ class Show_GUI():
 		self.set_axes()
 
 if __name__ == '__main__':
-	gui = Show_GUI()
+	filename = "forwardKinematics.csv"
+	gui = Show_GUI(filename)
 
 
 

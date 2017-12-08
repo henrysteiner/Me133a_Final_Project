@@ -1,11 +1,13 @@
 import numpy as np
 import math
+import csv
+import time 
 
 # This function creates the forward kinematics parameters using the joints
-def generateFK(joints):
+def generateFK(joints, filename):
 
 	fKMap = generateTransformation(joints[1])
-	params = [['Link', 'Theta', 'D', 'R', 'Alpha']]
+	params = []
 	params.append([1, joints[1].theta, joints[1].d, joints[1].r, joints[1].alpha])
 
 	for i in range(2, len(joints)):
@@ -14,11 +16,18 @@ def generateFK(joints):
 
 		params.append([i, joints[i].theta, joints[i].d, joints[i].r, joints[i].alpha])
 
-	for row in fKMap:
-		print row
+	# Keeps appending to the file so as not to lose data.
+	with open(filename, 'a') as f:
+		writer = csv.writer(f)
+		writer.writerow([time.strftime('%Y-%m-%d %H:%M:%S')])
+		writer.writerow(['Forward Kinematics Map'])
+		np.savetxt(f, fKMap, delimiter=',')
+		writer.writerow([''])
+		writer.writerow(['Link', 'Theta', 'D', 'R', 'Alpha'])
+		np.savetxt(f, params, delimiter=',')
+		writer.writerow([''])
 
-	for row in params:
-		print row
+	f.close()
 
 def generateTransformation(j):
 
