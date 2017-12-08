@@ -8,7 +8,8 @@ class Joint(object):
 	def __init__(self, jType, ID):
 		self.type = jType # 0 for prismatic, 1 for revolute
 		self.ID = ID
-		self.coordSystem = CoordSys3D(str(ID))
+		self.coordSystem = None
+		self.initJoint = None
 		self.x = 0 # in relation to original
 		self.y = 0 # in relation to original
 		self.z = 0 # in relation to original
@@ -17,7 +18,7 @@ class Joint(object):
 		self.theta = math.radians(90)
 		self.r = 0
 		self.alpha = math.radians(90)
-
+		
 	def setCoordSys(self):
 		self.coordSystem = CoordSys3D(str(self.ID))
 

@@ -15,11 +15,15 @@ class Show_GUI():
 		self.axes = plt.axes([0.05, 0.25, 0.90, 0.75], projection='3d')
 		self.axes.autoscale(enable=False,axis='both')
 
-		self.joints = []
 		self.numJoints = 4
 
-		for i in range(self.numJoints):
+		jointInit = Joint(1, 0)
+		jointInit.setCoordSys()
+		self.joints = [jointInit]
+
+		for i in range(1, self.numJoints):
 			joint = Joint(1,i)
+			joint.initJoint = jointInit
 			self.joints.append(joint)
 
 		self.joints[0].setCoordSys()
