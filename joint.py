@@ -45,10 +45,10 @@ class Joint(object):
 		self.coordSystem = newCoord
 
 		# Computing the coordinates of the new coordinate frame with respect to the origin and defining the new Joint accordingly
-		position = prevCoord.origin.express_coordinates(newCoord)
-		self.x = float(position[0]) + prevJoint.x
-		self.y = float(position[1]) + prevJoint.y
-		self.z = float(position[2]) + prevJoint.z
+		position =self.initJoint.coordSystem.origin.express_coordinates(newCoord)
+		self.x = float(position[0])
+		self.y = float(position[1])
+		self.z = float(position[2])
 
 
 
