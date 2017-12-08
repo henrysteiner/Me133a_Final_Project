@@ -12,7 +12,7 @@ class Show_GUI():
 		# Initialize all the variables
 		self.fig = plt.figure("DH Parameters	Robot Simulator")  #create the frame
 		self.axes = plt.axes([0.05, 0.2, 0.90, 0.75], projection='3d')
-		# self.axes.set_autoscale_on(False)
+		self.axes.autoscale(enable=False,axis='both')
 
 		self.joints = []
 		self.numJoints = 4
@@ -89,7 +89,7 @@ class Show_GUI():
 			self.r_slide.set_val(self.currentJoint.r)
 			self.alpha_slide.set_val(math.degrees(self.currentJoint.alpha))
 			#self.jointOptions.set_active(self.currentJoint.type)
-			#self.jointOptions.active = self.currentJoint.type
+			self.jointOptions.active = self.currentJoint.type
 
 		self.theta_slide.on_changed(getTheta)
 		self.d_slide.on_changed(getD)
@@ -182,7 +182,7 @@ class Show_GUI():
 
 		self.axes.set_xlim3d(-10, 10)
 		self.axes.set_ylim3d(-10, 10)
-		self.axes.set_zlim3d(-10, 10)
+		self.axes.set_zlim3d(0, 10)
 		self.axes.set_xlabel('X axis')
 		self.axes.set_ylabel('Y axis')
 		self.axes.set_zlabel('Z axis')
