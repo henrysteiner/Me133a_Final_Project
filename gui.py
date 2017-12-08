@@ -130,51 +130,72 @@ class Show_GUI():
 	def plotCoordinateSystem(self):
 		for i in range(self.numJoints):
 			joint = self.joints[i]
-
+			originCoord = self.joints[0].coordSystem
+			coord= joint.coordSystem
 			posX = joint.x
 			posY = joint.y
 			posZ = joint.z
 			lineDist = 5
-
-			if joint.ID == 1:
-			   xs = list((posX, posX + lineDist))
-			   ys = list((posY, posY))
-			   zs = list((posZ, posZ))
-			   self.axes.plot(xs, ys, zs, linewidth = 1, color="green")
-			   xs = list((posX, posX))
-			   ys = list((posY, posY + lineDist))
-			   zs = list((posZ, posZ))
-			   self.axes.plot(xs, ys, zs, linewidth = 1, color="blue")
-			   xs =list((posX, posX))
-			   ys = list((posY, posY))
-			   zs = list((posZ, posZ + lineDist))
-			   self.axes.plot(xs, ys, zs, linewidth = 1, color="red")
-			elif joint.type == 1:
-			   xs = list((posX, posX + lineDist))
-			   ys = list((posY, posY))
-			   zs = list((posZ, posZ))
-			   self.axes.plot(xs, ys, zs, linewidth = 1, color="green")
-			   xs = list((posX, posX))
-			   ys = list((posZ, posZ - lineDist))
-			   zs = list((posY, posY))
-			   self.axes.plot(xs, zs, ys, linewidth = 1, color="blue")
-			   xs =list((posX, posX))
-			   ys = list((posZ, posZ))
-			   zs = list((posY, posY + lineDist))
-			   self.axes.plot(xs, zs, ys, linewidth = 1, color="red")
-			elif joint.type == 0:
-			   xs = list((posY, posY + lineDist))
-			   ys = list((posX, posX))
-			   zs = list((posZ, posZ))
-			   self.axes.plot(ys, xs, zs, linewidth = 1, color="green")
-			   xs = list((posX, posX))
-			   ys = list((posZ, posZ + lineDist))
-			   zs = list((posY, posY))
-			   self.axes.plot(xs, zs, ys, linewidth = 1, color="blue")
-			   zs = list((posX, posX + lineDist))
-			   xs =list((posZ, posZ))
-			   ys = list((posY, posY))
-			   self.axes.plot(zs, ys, xs, linewidth = 1, color="red")
+			
+			xPoint = coord.locate_new('xPoint', lineDist*coord.i + 0*coord.j + 0*coord.k)
+			(xMove,yMove,zMove) = xPoint.origin.express_coordinates(originCoord)
+			xs=list((posX,xMove))
+			ys=list((posY,yMove))
+			zs=list((posZ,zMove))
+			self.axes.plot(xs,ys,zs, linewidth = 1, color="green")
+			
+			yPoint = coord.locate_new('yPoint', 0*coord.i + lineDist*coord.j + 0*coord.k)
+			(xMove,yMove,zMove) = yPoint.origin.express_coordinates(originCoord)
+			xs=list((posX,xMove))
+			ys=list((posY,yMove))
+			zs=list((posZ,zMove))
+			self.axes.plot(xs,ys,zs, linewidth = 1, color="blue")
+			
+			zPoint = coord.locate_new('zPoint', 0*coord.i + 0*coord.j + lineDist*coord.k)
+			(xMove,yMove,zMove) = zPoint.origin.express_coordinates(originCoord)
+			xs=list((posX,xMove))
+			ys=list((posY,yMove))
+			zs=list((posZ,zMove))
+			self.axes.plot(xs,ys,zs, linewidth = 1, color="red")
+# 			if joint.ID == 1:
+# 			   xs = list((posX, posX + lineDist))
+# 			   ys = list((posY, posY))
+# 			   zs = list((posZ, posZ))
+# 			   self.axes.plot(xs, ys, zs, linewidth = 1, color="green")
+# 			   xs = list((posX, posX))
+# 			   ys = list((posY, posY + lineDist))
+# 			   zs = list((posZ, posZ))
+# 			   self.axes.plot(xs, ys, zs, linewidth = 1, color="blue")
+# 			   xs =list((posX, posX))
+# 			   ys = list((posY, posY))
+# 			   zs = list((posZ, posZ + lineDist))
+# 			   self.axes.plot(xs, ys, zs, linewidth = 1, color="red")
+# 			elif joint.type == 1:
+# 			   xs = list((posX, posX + lineDist))
+# 			   ys = list((posY, posY))
+# 			   zs = list((posZ, posZ))
+# 			   self.axes.plot(xs, ys, zs, linewidth = 1, color="green")
+# 			   xs = list((posX, posX))
+# 			   ys = list((posZ, posZ - lineDist))
+# 			   zs = list((posY, posY))
+# 			   self.axes.plot(xs, zs, ys, linewidth = 1, color="blue")
+# 			   xs =list((posX, posX))
+# 			   ys = list((posZ, posZ))
+# 			   zs = list((posY, posY + lineDist))
+# 			   self.axes.plot(xs, zs, ys, linewidth = 1, color="red")
+# 			elif joint.type == 0:
+# 			   xs = list((posY, posY + lineDist))
+# 			   ys = list((posX, posX))
+# 			   zs = list((posZ, posZ))
+# 			   self.axes.plot(ys, xs, zs, linewidth = 1, color="green")
+# 			   xs = list((posX, posX))
+# 			   ys = list((posZ, posZ + lineDist))
+# 			   zs = list((posY, posY))
+# 			   self.axes.plot(xs, zs, ys, linewidth = 1, color="blue")
+# 			   zs = list((posX, posX + lineDist))
+# 			   xs =list((posZ, posZ))
+# 			   ys = list((posY, posY))
+# 			   self.axes.plot(zs, ys, xs, linewidth = 1, color="red")
 
 	def plotJoints(self):
 		self.fillArrays()
