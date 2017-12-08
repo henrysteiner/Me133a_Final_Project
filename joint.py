@@ -26,20 +26,23 @@ class Joint(object):
 	in order to calculate the new coordinate systems and location of the new joint (updating the new joint)'''
 	def defineNew(self, prevJoint):
 
+		theta = self.theta
+		d = self.d
+
 		if self.type == 0:
-			self.d = self.theta
-			self.theta = 0
+			d = self.theta
+			theta = 0
 
 		# Retrieving the coordinate system from joint 1
 		prevCoord = prevJoint.coordSystem
 
 		# Rotating coordinate system by theta and alpha
-		temp1 = prevCoord.orient_new_axis('temp1',self.theta, prevCoord.k)
+		temp1 = prevCoord.orient_new_axis('temp1',theta, prevCoord.k)
 		temp2 = temp1.orient_new_axis('temp2',self.alpha, prevCoord.i)
 
 		# Translating coordinate system based on d (distance from previous joint to new joint along PREVIOUS z-axis)
 		# and r (distance from previous joint to new joint along the NEW x-axis)
-		newCoord = temp2.orient_new_axis('newCoord',0,temp2.k,location=(self.d*prevCoord.k + self.r*temp2.i))
+		newCoord = temp2.orient_new_axis('newCoord',0,temp2.k,location=(d*prevCoord.k + self.r*temp2.i))
 
 		# Redfining the new Joint's coordinate system
 		self.coordSystem = newCoord

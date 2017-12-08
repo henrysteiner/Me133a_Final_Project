@@ -134,7 +134,7 @@ class Show_GUI():
 		self.z = np.array(z)
 
 	def plotCoordinateSystem(self):
-		for i in range(1, self.numJoints):
+		for i in range(self.numJoints):
 			joint = self.joints[i]
 			originCoord = self.joints[0].coordSystem
 			coord= joint.coordSystem
@@ -195,8 +195,6 @@ class Show_GUI():
 		
 		plt.draw()
 		self.set_axes()
-
-		
 
 if __name__ == '__main__':
 	gui = Show_GUI()
